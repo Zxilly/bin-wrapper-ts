@@ -1,0 +1,43 @@
+{
+	"name": "@zxilly/bin-wrapper",
+	"version": "1.0.0",
+	"description": "Binary wrapper that makes your programs seamlessly available as local dependencies, now with TypeScript.",
+	"license": "MIT",
+	"repository": "Zxilly/bin-wrapper-ts",
+	"author": {
+		"name": "Zxilly",
+		"email": "zxilly@outlook.com",
+		"url": "https://github.com/Zxilly"
+	},
+	"engines": {
+		"node": ">=16"
+	},
+	"scripts": {
+		"build": "tsc"
+	},
+	"type": "module",
+	"keywords": [
+		"bin",
+		"check",
+		"local",
+		"wrapper"
+	],
+	"dependencies": {
+		"@types/decompress": "^4.2.7",
+		"@types/got": "^9.6.12",
+		"arch": "^3.0.0",
+		"decompress": "^4.2.1",
+		"got": "^14.2.0",
+		"isexe": "^3.1.1",
+		"tempy": "^3.1.0"
+	},
+	"devDependencies": {
+		"@jest/globals": "^29.7.0",
+		"@types/node": "^20.11.18",
+		"crossenv": "0.0.2-security",
+		"jest": "^29.7.0",
+		"ts-jest": "^29.1.2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.3.3"
+	}
+}

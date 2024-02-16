@@ -17,11 +17,18 @@
 		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
 	},
 	"type": "module",
+	"exports": {
+		"types": "./lib/index.d.ts",
+		"default": "./lib/index.js"
+	},
 	"keywords": [
 		"bin",
 		"check",
 		"local",
 		"wrapper"
+	],
+	"files": [
+		"lib"
 	],
 	"dependencies": {
 		"@types/decompress": "^4.2.7",

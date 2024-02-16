@@ -14,7 +14,7 @@ npm install @zxilly/bin-wrapper
 
 ```js
 import path from 'node:path';
-import BinWrapper from '@xhmikosr/bin-wrapper';
+import BinWrapper from '@zxilly/bin-wrapper';
 
 const base = 'https://github.com/imagemin/gifsicle-bin/raw/main/vendor';
 const bin = new BinWrapper()
@@ -100,6 +100,9 @@ Run the binary with the specified command. It will ensure the binary exists and 
 
 Ensure the binary exists and is executable. If not, it will download the binary and grant execution permission.
 
+### validator(validator: Validator, os?: string, arch?: Arch): this
+
+Add a validator for the binary.
 
 ## License
 

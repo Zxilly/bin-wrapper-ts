@@ -12,6 +12,9 @@
 	"engines": {
 		"node": ">=16"
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"build": "tsc",
 		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"

@@ -7,6 +7,11 @@ describe('BinWrapper', () => {
 
     beforeEach(() => {
         binWrapper = new BinWrapper();
+
+        jest.spyOn((<any>binWrapper), 'createDir').mockImplementation(() => {});
+        jest.spyOn(<any>binWrapper, 'grantExecutable').mockImplementation(() => Promise.resolve());
+        jest.spyOn((<any>binWrapper), 'isDirectory').mockImplementation(() => true);
+        jest.spyOn((<any>binWrapper), 'exist').mockImplementation(() => true);
     });
 
     describe('src', () => {
@@ -87,8 +92,8 @@ describe('BinWrapper', () => {
             binWrapper.dest(dest);
             binWrapper.use(bin);
 
-            jest.spyOn(binWrapper, 'ensureExist').mockResolvedValueOnce();
-            jest.spyOn((<any>binWrapper), 'canExec').mockResolvedValueOnce(false);
+            jest.spyOn(binWrapper, 'ensureExist').mockImplementationOnce(() => Promise.resolve());
+            jest.spyOn((<any>binWrapper), 'canExec').mockImplementationOnce(() => Promise.resolve(false));
 
             await expect(binWrapper.run()).rejects.toThrowError(`The binary "${binWrapper.path()}" is not executable`);
             expect(binWrapper.ensureExist).toHaveBeenCalled();
@@ -101,8 +106,8 @@ describe('BinWrapper', () => {
             binWrapper.dest(dest);
             binWrapper.use(bin);
 
-            jest.spyOn(binWrapper, 'ensureExist').mockResolvedValueOnce();
-            jest.spyOn((<any>binWrapper), 'canExec').mockResolvedValueOnce(true);
+            jest.spyOn(binWrapper, 'ensureExist').mockImplementationOnce(() => Promise.resolve());
+            jest.spyOn((<any>binWrapper), 'canExec').mockImplementationOnce(() => Promise.resolve(true));
 
             await expect(binWrapper.run()).resolves.toBeUndefined();
             expect(binWrapper.ensureExist).toHaveBeenCalled();
@@ -117,8 +122,8 @@ describe('BinWrapper', () => {
 
             const cmd = ['custom', 'command'];
 
-            jest.spyOn(binWrapper, 'ensureExist').mockResolvedValueOnce();
-            jest.spyOn((<any>binWrapper), 'canExec').mockResolvedValueOnce(false);
+            jest.spyOn(binWrapper, 'ensureExist').mockImplementationOnce(() => Promise.resolve());
+            jest.spyOn((<any>binWrapper), 'canExec').mockImplementationOnce(() => Promise.resolve(false));
 
             await expect(binWrapper.run(cmd)).rejects.toThrowError(`The binary "${binWrapper.path()}" is not executable`);
             expect(binWrapper.ensureExist).toHaveBeenCalled();
@@ -133,8 +138,8 @@ describe('BinWrapper', () => {
 
             const cmd = ['custom', 'command'];
 
-            jest.spyOn(binWrapper, 'ensureExist').mockResolvedValueOnce();
-            jest.spyOn((<any>binWrapper), 'canExec').mockResolvedValueOnce(true);
+            jest.spyOn(binWrapper, 'ensureExist').mockImplementationOnce(() => Promise.resolve());
+            jest.spyOn((<any>binWrapper), 'canExec').mockImplementationOnce(() => Promise.resolve(true));
 
             await expect(binWrapper.run(cmd)).resolves.toBeUndefined();
             expect(binWrapper.ensureExist).toHaveBeenCalled();

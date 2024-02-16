@@ -14,7 +14,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"test": "jest"
+		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
 	},
 	"type": "module",
 	"keywords": [
@@ -28,6 +28,7 @@
 		"@types/got": "^9.6.12",
 		"arch": "^3.0.0",
 		"decompress": "^4.2.1",
+		"execa": "^8.0.1",
 		"got": "^14.2.0",
 		"isexe": "^3.1.1",
 		"tempy": "^3.1.0"
@@ -35,7 +36,7 @@
 	"devDependencies": {
 		"@jest/globals": "^29.7.0",
 		"@types/node": "^20.11.18",
-		"crossenv": "0.0.2-security",
+		"cross-env": "^7.0.3",
 		"jest": "^29.7.0",
 		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.2",

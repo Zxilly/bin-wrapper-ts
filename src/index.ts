@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {isexe} from "isexe";
 import {downloadAndExtract, download} from "./download";
+import {execa, ExecaChildProcess} from "execa";
 
 type Arch = typeof process.arch
 
@@ -18,10 +19,13 @@ interface CompressedSrcObject extends SrcObject {
     strip: number;
 }
 
+type Validator = (path: fs.PathLike) => boolean
+
 export default class BinWrapper {
     private sources: (SrcObject | CompressedSrcObject)[] = []
     private destination: string = ""
     private binName: string = ""
+    private validators: { os?: string, arch?: Arch, validator: Validator }[] = []
 
     /**
      * Add a source
@@ -48,6 +52,17 @@ export default class BinWrapper {
         return this;
     }
 
+    /*
+        * Add a validator
+        * @param validator The validator function
+        * @param os The OS to validate for
+        * @param arch The architecture to validate for
+     */
+    validator(validator: Validator, os?: string, arch?: Arch): this {
+        this.validators.push({validator, os, arch})
+        return this
+    }
+
 
     /*
      * Read the destination directory
@@ -64,9 +79,9 @@ export default class BinWrapper {
         }
 
         // ensure the destination exists and is a directory
-        if (!fs.existsSync(dest)) {
-            fs.mkdirSync(dest, {recursive: true});
-        } else if (!fs.statSync(dest).isDirectory()) {
+        if (!this.exist(dest)) {
+            this.createDir(dest)
+        } else if (!this.isDirectory(dest)) {
             throw new Error(`The destination "${dest}" is not a directory`);
         }
 
@@ -96,15 +111,13 @@ export default class BinWrapper {
         return path.join(this.destination, this.binName);
     }
 
-    private canExec() {
-        return isexe(this.path())
-    }
-
-    async run(cmd: string[] = ['--version']): Promise<void> {
+    async run(cmd: string[] = ['--version']): Promise<ExecaChildProcess> {
         await this.ensureExist()
         if (!(await this.canExec())) {
             throw new Error(`The binary "${this.path()}" is not executable`);
         }
+
+        return execa(this.path(), cmd)
     }
 
     private getDownloadTargets(): (SrcObject | CompressedSrcObject)[] {
@@ -122,13 +135,7 @@ export default class BinWrapper {
         }
         await this.download()
         await this.grantExecutable()
-    }
-
-    private async grantExecutable(): Promise<void> {
-        if (await this.canExec()) {
-            return;
-        }
-        fs.chmodSync(this.path(), 0o755);
+        await this.validate()
     }
 
     private async download(): Promise<void> {
@@ -140,9 +147,49 @@ export default class BinWrapper {
 
         await Promise.all(files.map(async file => {
             if ('prefix' in file && 'strip' in file) {
-                 await downloadAndExtract(file.url, this.destination, file.prefix, file.strip)
+                await downloadAndExtract(file.url, this.destination, file.prefix, file.strip)
             }
             await download(file.url, path.join(this.destination, this.binName))
         }))
+    }
+
+    private async validate(): Promise<void> {
+        const os = process.platform;
+        const arch = process.arch;
+
+        for (const {validator, os: validatorOs, arch: validatorArch} of this.validators) {
+            if (validatorOs && validatorOs !== os) {
+                continue;
+            }
+            if (validatorArch && validatorArch !== arch) {
+                continue;
+            }
+            if (!validator(this.path())) {
+                throw new Error(`The binary "${this.path()}" does not pass the validation`);
+            }
+        }
+    }
+
+    private exist(path: fs.PathLike): boolean {
+        return fs.existsSync(path)
+    }
+
+    private isDirectory(path: fs.PathLike): boolean {
+        return fs.statSync(path).isDirectory()
+    }
+
+    private canExec() {
+        return isexe(this.path())
+    }
+
+    private async grantExecutable(): Promise<void> {
+        if (await this.canExec()) {
+            return;
+        }
+        fs.chmodSync(this.path(), 0o755);
+    }
+
+    private createDir(dir: string): void {
+        fs.mkdirSync(dir, {recursive: true});
     }
 }

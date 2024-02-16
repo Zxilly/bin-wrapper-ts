@@ -4,22 +4,22 @@ import {isexe} from "isexe";
 import {downloadAndExtract, download} from "./download";
 import {execa, ExecaChildProcess} from "execa";
 
-type Arch = typeof process.arch
+export type Arch = typeof process.arch
 
-interface SrcObject {
+export interface SrcObject {
     url: string;
     os: string;
     arch: Arch;
 }
 
-interface CompressedSrcObject extends SrcObject {
+export interface CompressedSrcObject extends SrcObject {
     // The files in the compressed archive met the prefix will be extracted
     prefix: string;
     // The strip option is used to strip the directory levels from the extracted files
     strip: number;
 }
 
-type Validator = (path: fs.PathLike) => boolean
+export type Validator = (path: fs.PathLike) => boolean
 
 export default class BinWrapper {
     private sources: (SrcObject | CompressedSrcObject)[] = []
@@ -52,11 +52,11 @@ export default class BinWrapper {
         return this;
     }
 
-    /*
-        * Add a validator
-        * @param validator The validator function
-        * @param os The OS to validate for
-        * @param arch The architecture to validate for
+    /**
+     * Add a validator
+     * @param validator The validator function
+     * @param os The OS to validate for
+     * @param arch The architecture to validate for
      */
     validator(validator: Validator, os?: string, arch?: Arch): this {
         this.validators.push({validator, os, arch})
@@ -64,11 +64,11 @@ export default class BinWrapper {
     }
 
 
-    /*
+    /**
      * Read the destination directory
      */
     dest(): string;
-    /*
+    /**
      * Set the destination directory
      * @param dest The destination directory
      */
@@ -90,11 +90,11 @@ export default class BinWrapper {
         return this;
     }
 
-    /*
+    /**
      * Read the binary name
      */
     use(): string;
-    /*
+    /**
      * Set the binary name
      * @param bin The binary name
      */
@@ -107,10 +107,18 @@ export default class BinWrapper {
         return this;
     }
 
+    /**
+     * Return the path of the binary
+     */
     path(): string {
         return path.join(this.destination, this.binName);
     }
 
+    /**
+     * Run the binary
+     * @param cmd
+     * @returns The child process
+     */
     async run(cmd: string[] = ['--version']): Promise<ExecaChildProcess> {
         await this.ensureExist()
         if (!(await this.canExec())) {
@@ -129,6 +137,9 @@ export default class BinWrapper {
         });
     }
 
+    /**
+     * Ensure the binary exists
+     */
     async ensureExist(): Promise<void> {
         if (fs.existsSync(this.path())) {
             return;

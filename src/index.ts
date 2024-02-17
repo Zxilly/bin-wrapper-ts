@@ -5,10 +5,11 @@ import {downloadAndExtract, download} from "./download";
 import {execa, ExecaChildProcess} from "execa";
 
 export type Arch = typeof process.arch
+export type Platform = typeof process.platform
 
 export interface SrcObject {
     url: string;
-    os: string;
+    os: Platform;
     arch: Arch;
 }
 
@@ -33,7 +34,7 @@ export default class BinWrapper {
      * @param os The OS to download for
      * @param arch The architecture to download for
      */
-    src(src: string, os: string, arch: Arch): this {
+    src(src: string, os: Platform, arch: Arch): this {
         this.sources.push({url: src, os, arch});
         return this;
     }
@@ -47,7 +48,7 @@ export default class BinWrapper {
      * @param prefix The files in the compressed archive met the prefix will be extracted
      * @param strip strip the directory levels from the extracted files
      */
-    compressedSrc(src: string, os: string, arch: Arch, prefix: string, strip: number): this {
+    compressedSrc(src: string, os: Platform, arch: Arch, prefix: string, strip: number): this {
         this.sources.push({url: src, os, arch, prefix, strip});
         return this;
     }

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import {pipeline} from 'stream';
 import {promisify} from 'util';
 import {temporaryFileTask} from "tempy";
-import {decompress} from "./decompress";
+import {decompress} from "./decompress.js";
 
 const streamPipeline = promisify(pipeline);
 

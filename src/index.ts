@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {isexe} from "isexe";
-import {downloadAndExtract, download} from "./download";
+import {downloadAndExtract, download} from "./download.js";
 import {execa, ExecaChildProcess} from "execa";
 
 export type Arch = typeof process.arch

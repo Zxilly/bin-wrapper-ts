@@ -4,7 +4,6 @@ import * as tar from 'tar';
 import * as yauzl from 'yauzl';
 import {pipeline} from 'stream';
 import {Entry} from "yauzl";
-// @ts-ignore
 import {fileTypeFromFile} from "file-type";
 
 async function decompressTar(filePath: string, targetPath: string, filter: (filename: string, path: string) => boolean, strip: number): Promise<void> {

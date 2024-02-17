@@ -18,9 +18,6 @@ export async function downloadAndExtract(url: string, target: string, prefix: st
     await temporaryFileTask(async tempFile => {
         await download(url, tempFile);
 
-        await decompress(tempFile, target, {
-            filter: file => file.path.startsWith(prefix),
-            strip
-        });
+
     })
 }

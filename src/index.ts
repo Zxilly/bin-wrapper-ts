@@ -116,16 +116,31 @@ export default class BinWrapper {
 
     /**
      * Run the binary
-     * @param cmd
+     * @param args
      * @returns The child process
      */
-    async run(cmd: string[] = ['--version']): Promise<ExecaChildProcess> {
+    async run(args: string[]): Promise<ExecaChildProcess>;
+    /**
+     * Run the binary
+     * @param args
+     * @returns The child process
+     */
+    async run(...args: string[]): Promise<ExecaChildProcess>;
+    async run(args: string[] | string = ['--version'], ...others: string[]): Promise<ExecaChildProcess> {
+        if (Array.isArray(args) && others.length > 0) {
+            throw new Error('You can only pass an array or a list of arguments, not both');
+        }
+
+        if (typeof args === 'string') {
+            args = [args, ...others]
+        }
+
         await this.ensureExist()
         if (!(await this.canExec())) {
             throw new Error(`The binary "${this.path()}" is not executable`);
         }
 
-        return execa(this.path(), cmd)
+        return execa(this.path(), args)
     }
 
     private getDownloadTargets(): (SrcObject | CompressedSrcObject)[] {

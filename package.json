@@ -1,6 +1,6 @@
 {
 	"name": "@zxilly/bin-wrapper",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Binary wrapper that makes your programs seamlessly available as local dependencies, now with TypeScript.",
 	"license": "MIT",
 	"repository": "Zxilly/bin-wrapper-ts",

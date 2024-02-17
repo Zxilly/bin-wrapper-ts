@@ -73,7 +73,7 @@ async function decompressZip(filePath: string, targetPath: string, filter: (file
     });
 }
 
-async function decompress(filePath: string, targetPath: string, filter: (filename: string, path: string) => boolean, strip: number): Promise<void> {
+export async function decompress(filePath: string, targetPath: string, filter: (filename: string, path: string) => boolean, strip: number): Promise<void> {
     const type = await fileTypeFromFile(filePath);
 
     switch (type?.ext) {

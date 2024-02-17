@@ -3,7 +3,7 @@ import fs from "node:fs";
 import {pipeline} from 'stream';
 import {promisify} from 'util';
 import {temporaryFileTask} from "tempy";
-import decompress from "decompress";
+import {decompress} from "./decompress";
 
 const streamPipeline = promisify(pipeline);
 
@@ -18,6 +18,6 @@ export async function downloadAndExtract(url: string, target: string, prefix: st
     await temporaryFileTask(async tempFile => {
         await download(url, tempFile);
 
-
+        await decompress(tempFile, target, (filename) => filename.startsWith(prefix), strip);
     })
 }

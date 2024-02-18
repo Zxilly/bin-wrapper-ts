@@ -16,17 +16,49 @@ npm install @zxilly/bin-wrapper
 import path from 'node:path';
 import BinWrapper from '@zxilly/bin-wrapper';
 
-const base = 'https://github.com/imagemin/gifsicle-bin/raw/main/vendor';
-const bin = new BinWrapper()
-	.src(`${base}/macos/gifsicle`, 'darwin')
-	.src(`${base}/linux/x64/gifsicle`, 'linux', 'x64')
-	.src(`${base}/win/x64/gifsicle.exe`, 'win32', 'x64')
-	.dest(path.join('vendor'))
-	.use(process.platform === 'win32' ? 'gifsicle.exe' : 'gifsicle')
+const gifsicleBase =
+    'https://github.com/Zxilly/gifsicle-prebuilt/releases/download/v1.94/'
+
+export const gifsicle = new BinWrapper()
+    .src(`${gifsicleBase}gifsicle-linux-v1.94`, 'linux', 'x64')
+    .src(`${gifsicleBase}gifsicle-macos-v1.94`, 'darwin', 'x64')
+    .src(`${gifsicleBase}gifsicle-windows-v1.94.exe`, 'win32', 'x64')
+    .dest(path.join('vendor'))
+    .use(process.platform === 'win32' ? 'gifsicle.exe' : 'gifsicle')
+
+const img2webpBase =
+    'https://storage.googleapis.com/downloads.webmproject.org/releases/webp/'
+
+export const img2webp = new BinWrapper()
+    .compressedSrc(
+        `${img2webpBase}libwebp-1.3.2-windows-x64.zip`,
+        'win32',
+        'x64',
+        'img2webp',
+        2
+    )
+    .compressedSrc(
+        `${img2webpBase}libwebp-1.3.2-linux-x86-64.tar.gz`,
+        'linux',
+        'x64',
+        'img2webp',
+        2
+    )
+    .compressedSrc(
+        `${img2webpBase}libwebp-1.3.2-mac-x86-64.tar.gz`,
+        'darwin',
+        'x64',
+        'img2webp',
+        2
+    )
+    .dest(path.join('vendor'))
+    .use(process.platform === 'win32' ? 'img2webp.exe' : 'img2webp')
 
 (async () => {
-	await bin.run(['--version']);
-	console.log('gifsicle is working');
+	const result = await gifsicle.run(['--version']);
+	if (!result.failed) {
+        console.log('gifsicle is working');
+    }
 })();
 ```
 

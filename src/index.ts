@@ -175,6 +175,7 @@ export default class BinWrapper {
         await Promise.all(files.map(async file => {
             if ('prefix' in file && 'strip' in file) {
                 await downloadAndExtract(file.url, this.destination, file.prefix, file.strip)
+                return
             }
             await download(file.url, path.join(this.destination, this.binName))
         }))

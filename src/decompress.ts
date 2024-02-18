@@ -26,12 +26,17 @@ async function decompressZip(filePath: string, targetPath: string, filter: (file
             zipfile.readEntry();
 
             zipfile.on('entry', (entry: Entry) => {
+                // check if a directory
+                if (entry.fileName.endsWith('/')) {
+                    zipfile.readEntry();
+                    return;
+                }
+
                 const components = entry.fileName.split('/');
                 let strippedComponents = components.slice(strip);
 
                 if (strippedComponents.length === 0) {
-                    strippedComponents = [components[components.length - 1]]
-                    return;
+                    strippedComponents = [path.basename(entry.fileName)]
                 }
 
                 const strippedPath = strippedComponents.join('/');
@@ -41,7 +46,7 @@ async function decompressZip(filePath: string, targetPath: string, filter: (file
                     return;
                 }
 
-                zipfile.openReadStream(entry, (err, readStream) => {
+                zipfile.openReadStream(entry, async (err, fileStream) => {
                     if (err) {
                         reject(err);
                         return;
@@ -56,7 +61,7 @@ async function decompressZip(filePath: string, targetPath: string, filter: (file
                         }
 
                         const writeStream = fs.createWriteStream(path.join(dir, path.basename(strippedPath)));
-                        pipeline(readStream, writeStream, (err) => {
+                        pipeline(fileStream, writeStream, (err) => {
                             if (err) {
                                 reject(err);
                                 return;

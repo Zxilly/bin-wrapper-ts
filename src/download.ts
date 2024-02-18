@@ -11,13 +11,15 @@ export async function download(url: string, target: string) {
     const downloadStream = got.stream(url);
     const fileWriterStream = fs.createWriteStream(target);
 
-    await streamPipeline(downloadStream, fileWriterStream);
+    await streamPipeline(downloadStream, fileWriterStream).catch((err) => {
+        fs.unlinkSync(target);
+        throw new Error(`Failed to download '${url}' to '${target}': ${err}`);
+    });
 }
 
 export async function downloadAndExtract(url: string, target: string, prefix: string, strip: number) {
     await temporaryFileTask(async tempFile => {
         await download(url, tempFile);
-
         await decompress(tempFile, target, (filename) => filename.startsWith(prefix), strip);
     })
 }
